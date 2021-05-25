@@ -9,17 +9,22 @@ public class SQLDB {
     private static PreparedStatement Registration;
     private static PreparedStatement ChangeNick;
 
-      private static void prepareAllStatement() throws SQLException {
-          GetNickname = connection.prepareStatement("SELECT nickname FROM users WHERE login = ? AND password = ?;");
-          Registration = connection.prepareStatement("INSERT INTO users(login, password, nickname) VALUES (? ,? ,? );");
-          ChangeNick = connection.prepareStatement("UPDATE users SET nickname = ? WHERE nickname = ?;");
-      }
+    private static void prepareAllStatement() throws SQLException {
+        GetNickname = connection.prepareStatement("SELECT nickname FROM users WHERE login = ? AND password = ?;");
+        Registration = connection.prepareStatement("INSERT INTO users(login, password, nickname) VALUES (? ,? ,? );");
+        ChangeNick = connection.prepareStatement("UPDATE users SET nickname = ? WHERE nickname = ?;");
+    }
 
-    public static boolean connect() throws Exception {
-        Class.forName("org.sqlite.JDBC");
-        connection = DriverManager.getConnection("jdbc:sqlite:main.db");
-        stmt = connection.createStatement();
-        return false;
+    public static boolean connect() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:main.db");
+            prepareAllStatement();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void disconnect() {
