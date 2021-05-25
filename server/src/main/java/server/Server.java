@@ -17,7 +17,7 @@ public class Server {
     private List<ClientHandler> clients;
     private AuthService authService;
 
-    public Server() throws Exception {
+    public Server() {
         clients = new CopyOnWriteArrayList<>();
         if (!SQLDB.connect()) {
             throw new RuntimeException("Не удалось подключиться к БД");
