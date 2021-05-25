@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="main" uuid="2097162e-537a-4eda-b347-e9d63ec0ccd3">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:D:\Великий IT-шник))\IdeaProjects\Код препода Четверть 2\код другого препода 2 курс\chat_geekchat_16012021 урок 8\main.db</jdbc-url>
+    </data-source>
+  </component>
+</project>
