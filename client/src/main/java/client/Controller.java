@@ -20,9 +20,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -55,6 +53,8 @@ public class Controller implements Initializable {
     private Stage stage;
     private Stage regStage;
     private RegController regController;
+
+    private static PrintWriter write;
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
@@ -106,6 +106,7 @@ public class Controller implements Initializable {
                             if (str.startsWith(Command.AUTH_OK)) {
                                 nickname = str.split("\\s")[1];
                                 setAuthenticated(true);
+                                historyFile(nickname);
                                 break;
                             }
 
@@ -164,6 +165,15 @@ public class Controller implements Initializable {
             }).start();
 
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void historyFile(String nickname) {
+        try {
+            write = new PrintWriter(new File("history/history_" + nickname + ".txt")) {
+            };
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
