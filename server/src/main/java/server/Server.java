@@ -1,6 +1,8 @@
 package server;
 
 import commands.Command;
+import server.database.SQLDBAuthService;
+import server.database.SQLDB;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -17,7 +19,10 @@ public class Server {
 
     public Server() {
         clients = new CopyOnWriteArrayList<>();
-        authService = new SimpleAuthService();
+        if (!SQLDB.connect()) {
+            throw new RuntimeException("Не удалось подключиться к БД");
+        }
+        authService = new SQLDBAuthService();
 
         try {
             server = new ServerSocket(PORT);
@@ -32,6 +37,7 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            SQLDB.disconnect();
             try {
                 server.close();
             } catch (IOException e) {
