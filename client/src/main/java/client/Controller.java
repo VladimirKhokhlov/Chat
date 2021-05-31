@@ -3,7 +3,6 @@ package client;
 import commands.Command;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -18,11 +17,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -56,6 +52,9 @@ public class Controller implements Initializable {
     private Stage regStage;
     private RegController regController;
 
+    private static PrintWriter write;
+
+
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
         msgPanel.setVisible(authenticated);
@@ -67,6 +66,7 @@ public class Controller implements Initializable {
         if (!authenticated) {
             nickname = "";
         }
+        stop();
         setTitle(nickname);
         textArea.clear();
     }
@@ -106,6 +106,7 @@ public class Controller implements Initializable {
                             if (str.startsWith(Command.AUTH_OK)) {
                                 nickname = str.split("\\s")[1];
                                 setAuthenticated(true);
+                                createHistoryFile(nickname);
                                 break;
                             }
 
@@ -123,6 +124,8 @@ public class Controller implements Initializable {
                             }
                         } else {
                             textArea.appendText(str + "\n");
+                            createHistoryFile(nickname);
+
                         }
                     }
 
@@ -147,6 +150,7 @@ public class Controller implements Initializable {
 
                         } else {
                             textArea.appendText(str + "\n");
+                            putMsgInHistory(str);
                         }
                     }
                 } catch (RuntimeException e) {
@@ -166,6 +170,26 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void createHistoryFile(String nickname) {
+        try {
+            boolean historyDir = new File("client\\history").mkdir();
+            File file = new File("client/history/history_" + nickname + ".txt");
+            write = new PrintWriter(new FileOutputStream(file, true), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stop() {
+        if (write != null) {
+            write.close();
+        }
+    }
+
+    private void putMsgInHistory(String msg) {
+        write.println(msg);
     }
 
     @FXML
