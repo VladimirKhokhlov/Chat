@@ -2,7 +2,6 @@ package client;
 
 import commands.Command;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,7 +11,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -42,10 +40,7 @@ public class Controller implements Initializable {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
-    private final String IP_ADDRESS = "localhost";
-    private final int PORT = 8189;
 
-    private boolean authenticated;
     private String nickname;
 
     private Stage stage;
@@ -56,7 +51,6 @@ public class Controller implements Initializable {
 
 
     public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
         msgPanel.setVisible(authenticated);
         msgPanel.setManaged(authenticated);
         clientList.setVisible(authenticated);
@@ -92,6 +86,8 @@ public class Controller implements Initializable {
 
     private void connect() {
         try {
+            String IP_ADDRESS = "localhost";
+            int PORT = 8189;
             socket = new Socket(IP_ADDRESS, PORT);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
@@ -193,7 +189,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void sendMsg(ActionEvent actionEvent) {
+    public void sendMsg() {
         try {
             out.writeUTF(textField.getText());
             textField.clear();
@@ -203,7 +199,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void tryToAuth(ActionEvent actionEvent) {
+    public void tryToAuth() {
         if (socket == null || socket.isClosed()) {
             connect();
         }
@@ -220,23 +216,19 @@ public class Controller implements Initializable {
 
     private void setTitle(String nickname) {
         if (nickname.equals("")) {
-            Platform.runLater(() -> {
-                stage.setTitle("GeekChat");
-            });
+            Platform.runLater(() -> stage.setTitle("GeekChat"));
         } else {
-            Platform.runLater(() -> {
-                stage.setTitle(String.format("GeekChat [ %s ]", nickname));
-            });
+            Platform.runLater(() -> stage.setTitle(String.format("GeekChat [ %s ]", nickname)));
         }
     }
 
-    public void clientListClicked(MouseEvent mouseEvent) {
+    public void clientListClicked() {
 //        System.out.println(clientList.getSelectionModel().getSelectedItem());
         String receiver = clientList.getSelectionModel().getSelectedItem();
         textField.setText(String.format("%s %s ", Command.PRV_MSG, receiver));
     }
 
-    public void registration(ActionEvent actionEvent) {
+    public void registration() {
         if (regStage == null) {
             createRegWindow();
         }

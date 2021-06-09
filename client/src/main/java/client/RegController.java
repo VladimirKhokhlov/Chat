@@ -16,7 +16,7 @@ public class RegController {
         this.controller = controller;
     }
 
-    public void tryToReg(ActionEvent actionEvent) {
+    public void tryToReg() {
         String login = loginField.getText().trim();
         String password = passwordField.getText().trim();
         String nickname = nicknameField.getText().trim();
