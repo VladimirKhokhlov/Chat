@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 public class ClientHandler {
     private Server server;
@@ -14,6 +15,7 @@ public class ClientHandler {
     private DataOutputStream out;
     private String nickname;
     private String login;
+    public static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
 
     public ClientHandler(Server server, Socket socket) {
         try {
@@ -39,7 +41,7 @@ public class ClientHandler {
                                     nickname = newNick;
                                     sendMsg(Command.AUTH_OK + " " + nickname);
                                     server.subscribe(this);
-                                    System.out.println("client " + nickname + " connected " + socket.getRemoteSocketAddress());
+                                    logger.info("client " + nickname + " connected " + socket.getRemoteSocketAddress());
                                     break;
                                 } else {
                                     sendMsg("С этим логином уже авторизовались");
@@ -75,7 +77,7 @@ public class ClientHandler {
                         if (str.startsWith("/")) {
                             if (str.equals(Command.END)) {
                                 sendMsg(Command.END);
-                                System.out.println("client disconnected");
+                                logger.info("client disconnected");
                                 break;
                             }
                             if (str.startsWith(Command.PRV_MSG)) {

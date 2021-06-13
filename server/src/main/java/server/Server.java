@@ -4,11 +4,15 @@ import commands.Command;
 import server.database.SQLDBAuthService;
 import server.database.SQLDB;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class Server {
     private ServerSocket server;
@@ -17,20 +21,25 @@ public class Server {
     private List<ClientHandler> clients;
     private AuthService authService;
 
-    public Server() {
+    public static final Logger logger = Logger.getLogger(Server.class.getName());
+    LogManager manager = LogManager.getLogManager();
+
+    public Server() throws IOException {
+        manager.readConfiguration(new FileInputStream("logging.properties"));
         clients = new CopyOnWriteArrayList<>();
         if (!SQLDB.connect()) {
+            logger.info("Не удалось подключиться к БД");
             throw new RuntimeException("Не удалось подключиться к БД");
         }
         authService = new SQLDBAuthService();
 
         try {
             server = new ServerSocket(PORT);
-            System.out.println("Server started");
+            logger.info("Server started");
 
             while (true) {
                 socket = server.accept();
-                System.out.println("Client connected");
+                logger.info("Client connected");
                 new ClientHandler(this, socket);
             }
 
@@ -48,6 +57,7 @@ public class Server {
 
     public void broadcastMsg(ClientHandler clientHandler, String msg) {
         String message = String.format("[ %s ]: %s", clientHandler.getNickname(), msg);
+        logger.info(message);
         for (ClientHandler c : clients) {
             c.sendMsg(message);
         }
@@ -55,6 +65,7 @@ public class Server {
 
     public void privateMsg(ClientHandler sender, String receiver, String msg) {
         String message = String.format("[ %s ] to [ %s ]: %s", sender.getNickname(), receiver, msg);
+        logger.info(message);
         for (ClientHandler c : clients) {
             if (c.getNickname().equals(receiver)) {
                 c.sendMsg(message);

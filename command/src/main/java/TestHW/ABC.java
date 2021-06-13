@@ -1,3 +1,5 @@
+package TestHW;
+
 public class ABC {
     static final Object monitor = new Object();
     static volatile int currentNumber = 1;
